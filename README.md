@@ -1,2 +1,2 @@
-# cubicpp
+# cubic++
 Empirical Fine-Tuned CUBIC
