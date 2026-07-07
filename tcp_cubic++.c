@@ -39,8 +39,8 @@
 bool debug __read_mostly = true;
 EXPORT_SYMBOL(debug);
 #define DP(fmt, ...)    if (debug) printk("%s:%d: " fmt, __func__, __LINE__, ##__VA_ARGS__)
-#define PACING_RATE(sk)	(READ_ONCE((sk)->sk_pacing_rate) * NBBY / 1024 / 1024)
 #endif /* ! CUBICPP_NODEBUG */
+#define PACING_RATE(sk)	(READ_ONCE((sk)->sk_pacing_rate) * NBBY / 1024 / 1024)
 
 #define BICTCP_BETA_SCALE    1024	/* Scale factor beta calculation
 					 * max_cwnd = snd_cwnd * beta
@@ -223,7 +223,7 @@ static u32 hystart_max_bw_cwnd(const struct sock *sk, const struct rate_sample *
 	return cwnd;
 }
 
-#if ! defined(CUBICPP_NODEBUG)
+#if 1 || ! defined(CUBICPP_NODEBUG)
 static u64 hystart_max_bw_bytes(const struct sock *sk)
 {
 	const struct tcp_sock *tp = tcp_sk(sk);
@@ -938,7 +938,9 @@ __bpf_kfunc static void cubictcp_state(struct sock *sk, u8 new_state)
 
 static bool cubictcp_loss_exceed(struct sock *sk, const struct rate_sample *rs)
 {
+#if ! defined(CUBICPP_NODEBUG)
 	struct bictcp *ca = inet_csk_ca(sk);
+#endif /* ! CUBICPP_NODEBUG */
 
 #if 0
 	struct tcp_sock *tp = tcp_sk(sk);
