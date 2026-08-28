@@ -1216,7 +1216,7 @@ static void hystart_update_ack_train(struct sock *sk, const struct rate_sample *
 	/*
 	 * XXX: this is not original code.
 	 *	but private space of struct bictcp
-	 *	is not limitied.
+	 *	is limitied.
 	 *	So, here borrow other variables.
 	 */
 #if HZ < USEC_PER_MSEC
