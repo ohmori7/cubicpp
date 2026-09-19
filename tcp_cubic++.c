@@ -268,7 +268,7 @@ static void hystart_bw_update(struct sock *sk, const struct rate_sample *rs)
 	if (! rs->is_app_limited || bw >= hystart_max_bw(sk))
 		minmax_running_max(&ca->bw, HYSTART_BW_WINDOW, ca->bw_cnt, bw);
 #if 0
-	DP("bandwith: %llu Mbps (%llu) sndint=%u,rcvint=%u,int=%lu,,delivered=%u",
+	DP("bandwidth: %llu Mbps (%llu) sndint=%u,rcvint=%u,int=%lu,delivered=%u",
 	    (u64)tp->mss_cache * NBBY * USEC_PER_SEC * rs->delivered / rs->interval_us
 	    / 1024 / 1024, bw, rs->snd_interval_us, rs->rcv_interval_us, rs->interval_us, rs->delivered);
 	DP("bandwidth: %llu (%llu Mbps)", bw, ((NBBY * bw * tp->mss_cache * USEC_PER_SEC) >> BW_SCALE) / 1024 / 1024);
