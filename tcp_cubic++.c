@@ -374,11 +374,12 @@ static void bictcp_hystart_enter_css(struct sock *sk)
 	ca->round = 1;
 	ca->css_rtt = ca->curr_rtt;
 	ca->css_rtt_max = ca->curr_rtt_max;
-	DP("enter CSS: segs=%u,cwnd=%u,ssthresh=%d,delay=min[%d]prior[%d,%d]curr[%d,%d]css[%d,%d],sample=%u/%u",
+	DP("enter CSS: segs=%u,cwnd=%u,ssthresh=%d,delay=min[%d]prior[%d,%d]curr[%d,%d]css[%d,%d],thresh=%u,sample=%u/%u",
 	    tcp_sk(sk)->data_segs_out,
 	    tcp_snd_cwnd(tcp_sk(sk)), tcp_sk(sk)->snd_ssthresh,
 	    ca->delay_min, ca->prior_rtt, ca->prior_rtt_max,
 	    ca->curr_rtt, ca->curr_rtt_max, ca->css_rtt, ca->css_rtt_max,
+	    ca->delay_min + HYSTART_DELAY_THRESH(ca->delay_min >> HYSTART_RTT_DIVISOR_SHIFT),
 	    ca->sample_cnt, HYSTART_MIN_SAMPLES);
 }
 
