@@ -990,7 +990,6 @@ static void cubictcp_cwnd_reduction(struct sock *sk, const struct rate_sample *r
 	if (rs->acked_sacked <= 0 || WARN_ON_ONCE(! tp->prior_cwnd))
 		return;
 
-	WARN_ON(inet_csk(sk)->icsk_ca_state > TCP_CA_Recovery);
 	if (inet_csk(sk)->icsk_ca_state < TCP_CA_Recovery) {
 		cwnd = max(tcp_snd_cwnd(tp) * gamma / BICTCP_BETA_SCALE, 1U);
 		tcp_snd_cwnd_set(tp, cwnd);
