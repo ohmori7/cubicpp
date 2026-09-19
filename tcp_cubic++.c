@@ -55,7 +55,7 @@ EXPORT_SYMBOL(debug);
 #define HYSTART_MIN_SAMPLES	8
 //#define CUBICPP_SHORT_THRESHOLD
 #ifdef CUBICPP_SHORT_THRESHOLD
-#define HYSTART_DELAY_MIN	(1000U)	/* 2.5 ms */
+#define HYSTART_DELAY_MIN	(1000U)	/* 1 ms */
 #else /* CUBICPP */
 #define HYSTART_DELAY_MIN	(4000U)	/* 4 ms */
 #endif /* ! CUBICPP */
