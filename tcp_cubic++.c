@@ -931,35 +931,21 @@ __bpf_kfunc static void cubictcp_state(struct sock *sk, u8 new_state)
 #endif /* CUBICPP */
 }
 
-#define HYSTART_LOSS_THRESHOLD	2
-#define HYSTART_LOSS_SCALE	100
-
 static bool cubictcp_loss_exceed(struct sock *sk, const struct rate_sample *rs)
 {
 #if ! defined(CUBICPP_NODEBUG)
 	struct bictcp *ca = inet_csk_ca(sk);
 #endif /* ! CUBICPP_NODEBUG */
 
-#if 0
-	struct tcp_sock *tp = tcp_sk(sk);
-	return !! (max(tp->lost_out, tp->retrans_out) * HYSTART_LOSS_SCALE / tp->packets_out > HYSTART_LOSS_THRESHOLD);
-#else
-	/* XXX: remove this... */
-	if (rs->losses > 0)
-		return true;
-	if (rs->losses * HYSTART_LOSS_SCALE / (rs->losses + rs->delivered) <
-	    HYSTART_LOSS_THRESHOLD)
+	if (rs->losses <= 0)
 		return false;
-	if (tcp_snd_cwnd(tcp_sk(sk)) <= hystart_max_bw_cwnd(sk, rs)) {
-		DP("trivial loss: losses=%u,acked=%u,delivered=%u,cwnd=%u,dcwnd=%u,rtt=%lu,rttmin=%u",
-		    rs->losses, rs->acked_sacked, rs->delivered, tcp_snd_cwnd(tcp_sk(sk)),
-		    hystart_max_bw_cwnd(sk, rs),
-		    rs->rtt_us, ca->delay_min);
+	if (tcp_snd_cwnd(tcp_sk(sk)) * 4 <= hystart_max_bw_cwnd(sk, rs) * 7)
 		return false;
-	}
-
+	DP("massive loss: losses=%u,acked=%u,delivered=%u,cwnd=%u,dcwnd=%u,rtt=%lu,rttmin=%u",
+	    rs->losses, rs->acked_sacked, rs->delivered, tcp_snd_cwnd(tcp_sk(sk)),
+	    hystart_max_bw_cwnd(sk, rs),
+	    rs->rtt_us, ca->delay_min);
 	return true;
-#endif
 }
 
 static bool cubictcp_delay_exceed(struct sock *sk, const struct rate_sample *rs)
