@@ -328,9 +328,6 @@ static inline bool bictcp_hystart_delay_exceed(const struct sock *sk, const stru
 	struct bictcp *ca = inet_csk_ca(sk);
 	u32 base;
 
-	if (rs->is_retrans)
-		return false;
-
 #if 0
 	/*
 	 * This is not HyStart++ way, original but should be examined more.
