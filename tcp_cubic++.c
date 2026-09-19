@@ -1036,8 +1036,15 @@ static bool cubictcp_in_cwnd_reduction(struct sock *sk, const struct rate_sample
 
 	if (cubictcp_delay_exceed(sk, rs))
 		return true;
+#if 0
 	if (! tcp_in_cwnd_reduction(sk))
 		return false;
+#else
+	/* open modified code of tcp_in_cwnd_reduction(). */
+	if ((TCPF_CA_CWR | TCPF_CA_Loss) &
+	    (1 << inet_csk(sk)->icsk_ca_state))
+		return true;
+#endif
 	if (! cubictcp_loss_exceed(sk, rs))
 		return false;
 	return true;
