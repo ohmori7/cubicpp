@@ -327,7 +327,7 @@ static inline bool hystart_delay_exceed(s64 curr, s64 base)
 	    base + HYSTART_DELAY_THRESH((u64)base >> HYSTART_RTT_DIVISOR_SHIFT));
 }
 
-static inline bool bictcp_hystart_delay_exceed(const struct sock *sk, const struct rate_sample *rs)
+static inline bool bictcp_hystart_delay_exceed(const struct sock *sk)
 {
 	struct bictcp *ca = inet_csk_ca(sk);
 	u32 base;
@@ -504,8 +504,10 @@ static void cubictcp_update_pacing_rate(struct sock *sk, const struct rate_sampl
 	rate = (u64)tp->mss_cache * USEC_PER_SEC;
 	/* XXX: maybe should consider lost packets or others... */
 	rate *= max(tcp_snd_cwnd(tp), tp->packets_out);
+	if ((s64)ca->curr_rtt > 0 && ca->curr_rtt != HYSTART_INFINITY)
+		do_div(rate, ca->curr_rtt);
 	/* here should use recent RTT, not delay_min exceeding value. */
-	if ((s64)rs->rtt_us > 0)
+	else if ((s64)rs->rtt_us > 0)
 		do_div(rate, rs->rtt_us);
 	else if ((s64)ca->delay_min > 0)
 		do_div(rate, ca->delay_min); /* XXX */
