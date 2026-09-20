@@ -427,7 +427,6 @@ static bool bictcp_hystart_exceed(struct sock *sk, const struct rate_sample *rs)
 
 #if 0
 	/* detect congestion by sending/receiving interval difference. */
-	/* XXX: currently, does not work well... on wired... */
 	if (tcp_sk(sk)->data_segs_out > TCP_INIT_CWND &&
 #define INITIAL_PACING_WORKAROUND
 #ifdef INITIAL_PACING_WORKAROUND
