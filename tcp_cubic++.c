@@ -1316,8 +1316,6 @@ __bpf_kfunc static void cubictcp_acked(struct sock *sk, const struct rate_sample
 		DP("delayed ack");
 		return;
 	}
-	if (sample->is_retrans)
-		return;
 #else /* CUBICPP */
 	/* Discard delay samples right after fast recovery */
 	if (ca->epoch_start && (s32)(tcp_jiffies32 - ca->epoch_start) < HZ)
