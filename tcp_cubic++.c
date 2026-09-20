@@ -438,17 +438,11 @@ static bool bictcp_hystart_exceed(struct sock *sk, const struct rate_sample *rs)
 
 	if (ca->round == 0)
 		return false;
-
-#define HYSTART_CEIL(rtt)	((rtt) + (HYSTART_DELAY_THRESH(rtt) >> 1) + (HYSTART_DELAY_THRESH(rtt) >> 2))
-#if 0
-	if (ca->prior_rtt > HYSTART_CEIL(ca->css_rtt))
-		return true;
-#endif /* 0 */
-#if 1
-	if (ca->curr_rtt_max > HYSTART_CEIL(ca->css_rtt)) {
-#else
-	if (ca->curr_rtt_max > HYSTART_CEIL(ca->css_rtt_max)) {
-#endif /* 0 */
+	if (ca->sample_cnt < HYSTART_MIN_SAMPLES)
+                return false;
+#define HYSTART_CEIL(rtt)	((rtt) << 1)
+	if (ca->curr_rtt != HYSTART_INFINITY &&
+	    ca->curr_rtt > HYSTART_CEIL(ca->delay_min)) {
 		DP("hit the ceil: curr=%u,css*1.75=%u,curr_max=%u,css_max*1.75=%u,sndint=%u,rcvint=%u",
 		    ca->curr_rtt, HYSTART_CEIL(ca->css_rtt),
 		    ca->curr_rtt_max, HYSTART_CEIL(ca->css_rtt_max),
