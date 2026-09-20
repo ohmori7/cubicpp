@@ -152,9 +152,9 @@ struct bictcp {
 	u32	prior_rtt_max;
 	u32	css_rtt;
 	u32	css_rtt_max;
-#endif /* CUBICPP */
-#ifdef CUBICPP_X
+#ifdef nospacehere
 	u32	prior_snd_una;
+#endif /* nospacehere */
 #endif /* CUBICPP */
 };
 
@@ -1104,13 +1104,14 @@ __bpf_kfunc static void cubictcp_cong_control(struct sock *sk, const struct rate
 
 	/* similar to tcp_input.c:tcp_cong_control(). */
 
-#if 0
-	/* i do not know this is necessary or not, but leave it as is. */
+#ifdef nospacehere
+	/* XXX: i am not sure well if this is necessary or not,
+	 * but leave the original code as is. */
 	if (likely(after(tp->snd_una, ca->prior_snd_una))) {
 		ca->prior_snd_una = tp->snd_una;
 		is_snd_una_changed = true;
 	}
-#endif /* 0 */
+#endif /* nospacehere */
 
 	/* ignore unreliable sample of SACK reneging. */
 	if (rs->delivered == -1)
