@@ -82,7 +82,11 @@ static int bic_scale __read_mostly = 41;
 static int tcp_friendliness __read_mostly = 1;
 
 static int hystart __read_mostly = 1;
+#ifdef CUBICPP
+static int hystart_detect __read_mostly = 0;
+#else /* CUBICPP */
 static int hystart_detect __read_mostly = HYSTART_ACK_TRAIN | HYSTART_DELAY;
+#endif /* ! CUBICPP */
 static int hystart_ack_delta_us __read_mostly = 2000;
 
 static u32 cube_rtt_scale __read_mostly;
