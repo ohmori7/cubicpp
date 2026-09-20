@@ -400,17 +400,17 @@ static void bictcp_hystart_restart_css(struct sock *sk)
 	tp->snd_ssthresh = TCP_INFINITE_SSTHRESH; /* XXX: initial value? */
 }
 
-static void bictcp_hystart_try_restart_css(struct sock *sk)
+static bool bictcp_hystart_try_restart_css(struct sock *sk)
 {
 	struct bictcp *ca = inet_csk_ca(sk);
 
 	WARN_ON(ca->found);
 #define HYSTART_JITTER_RATIO	10
 #define	HYSTART_JITTER(rtt)	((rtt) * (100 + HYSTART_JITTER_RATIO) / 100)
-	if (ca->css_rtt <= HYSTART_JITTER(ca->curr_rtt) ||
-	    ca->curr_rtt_max <= HYSTART_JITTER(ca->css_rtt_max))
-		return;
+	if (ca->css_rtt <= HYSTART_JITTER(ca->curr_rtt))
+		return false;
 	bictcp_hystart_restart_css(sk);
+	return true;
 }
 
 static bool bictcp_hystart_exceed(struct sock *sk, const struct rate_sample *rs)
@@ -1282,15 +1282,16 @@ static void hystart_update(struct sock *sk, const struct rate_sample *rs)
 		hystart_update_ack_train(sk, rs);
 	if (ca->sample_cnt < HYSTART_MIN_SAMPLES)
 		return;
-	if (ca->round == HYSTART_CSS_ROUND_NONE) {
-		if (bictcp_hystart_delay_exceed(sk, rs))
-			bictcp_hystart_enter_css(sk);
-	} else if (ca->round <= HYSTART_CSS_ROUNDS)
-		bictcp_hystart_try_restart_css(sk);
 #ifdef HYSTART_FULL_ROUND
 	if (! after(tp->snd_una, ca->end_seq))
 		return;
 #endif /* HYSTART_FULL_ROUND */
+	if (ca->round == HYSTART_CSS_ROUND_NONE) {
+		if (bictcp_hystart_delay_exceed(sk))
+			bictcp_hystart_enter_css(sk);
+	} else if (ca->round <= HYSTART_CSS_ROUNDS)
+		if (bictcp_hystart_try_restart_css(sk))
+			return;
 	/* XXX: just for debug logging... */
 	if (ca->round > HYSTART_CSS_ROUND_NONE &&
 	    ca->round <= HYSTART_CSS_ROUNDS)
