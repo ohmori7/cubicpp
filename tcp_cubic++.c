@@ -405,7 +405,7 @@ static void bictcp_hystart_try_restart_css(struct sock *sk)
 	struct bictcp *ca = inet_csk_ca(sk);
 
 	WARN_ON(ca->found);
-#define HYSTART_JITTER_RATIO	0
+#define HYSTART_JITTER_RATIO	10
 #define	HYSTART_JITTER(rtt)	((rtt) * (100 + HYSTART_JITTER_RATIO) / 100)
 	if (ca->css_rtt <= HYSTART_JITTER(ca->curr_rtt) ||
 	    ca->curr_rtt_max <= HYSTART_JITTER(ca->css_rtt_max))
