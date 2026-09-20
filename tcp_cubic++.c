@@ -138,6 +138,7 @@ struct bictcp {
 		unused_a:2,
 		pacing_workaround:1;
 #endif /* CUBICPP */
+/* #define HYSTART_FULL_ROUND */
 #ifdef HYSTART_FULL_ROUND
 	u32	end_seq;	/* end_seq of the round */
 #endif /* HYSTART_FULL_ROUND */
