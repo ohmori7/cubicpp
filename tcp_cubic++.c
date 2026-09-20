@@ -354,20 +354,11 @@ static inline bool bictcp_hystart_delay_exceed(const struct sock *sk, const stru
 	}
 #endif /* 0 */
 
-#if 1	/* okay for wired.  NG for wireless??? */
+	WARN_ON(ca->sample_cnt < HYSTART_MIN_SAMPLES);
 	base = ca->delay_min;
-	if (unlikely(base <= 0))
-		return false;
-#elif 0	/* okay for wired.  NG for wireless. */
-	base = ca->prior_rtt;
-	if (unlikely(base == HYSTART_INFINITY))
-		base = ca->curr_rtt;
-#elif 1	/* NG for wired??? */
-	base = ca->prior_rtt_max;
 	if (unlikely(base == 0))
 		return false;
-#endif /* 0 */
-	return hystart_delay_exceed(rs->rtt_us, base);
+	return hystart_delay_exceed(ca->curr_rtt, base);
 }
 
 static void bictcp_hystart_enter_css(struct sock *sk)
