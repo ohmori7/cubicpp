@@ -434,7 +434,7 @@ static bool bictcp_hystart_exceed(struct sock *sk, const struct rate_sample *rs)
 	     tcp_sk(sk)->data_segs_out > TCP_INIT_CWND * 2) &&
 #endif /* INITIAL_PACING_WORKAROUND */
 	    rs->snd_interval_us > 0 &&
-	    rs->snd_interval_us + (rs->snd_interval_us >> 4)
+	    rs->snd_interval_us + (rs->snd_interval_us >> 1)
 	    < rs->rcv_interval_us) {
 		DP("exceed: dsegs=%u,rtt=%lu,sndint=%u,rcvint=%u",
 		    tcp_sk(sk)->data_segs_out,
