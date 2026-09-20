@@ -227,7 +227,7 @@ static u32 hystart_max_bw_cwnd(const struct sock *sk, const struct rate_sample *
 	return cwnd;
 }
 
-#if 1 || ! defined(CUBICPP_NODEBUG)
+#if ! defined(CUBICPP_NODEBUG)
 static u64 hystart_max_bw_bytes(const struct sock *sk)
 {
 	const struct tcp_sock *tp = tcp_sk(sk);
@@ -965,21 +965,12 @@ static bool cubictcp_delay_exceed(struct sock *sk, const struct rate_sample *rs)
 		return false;
 	if (rs->rtt_us < 0 || ca->delay_min <= 0)
 		return false;
-#if 0	/* NG for wireless??? */
-	return !! (rs->rtt_us > HYSTART_CEIL(ca->delay_min));
-#elif 0
-	return !! (rs->rtt_us > HYSTART_CEIL(ca->css_rtt_max));
-#else
+	if (ca->sample_cnt < HYSTART_MIN_SAMPLES)
+		return false;
 	if (ca->curr_rtt == HYSTART_INFINITY ||
-	    ca->curr_rtt <= HYSTART_CEIL(ca->css_rtt_max))
-		return false;
-	if (ca->prior_rtt == HYSTART_INFINITY ||
-	    ca->prior_rtt <= HYSTART_CEIL(ca->css_rtt_max))
-		return false;
-	if (PACING_RATE(sk) <= hystart_max_bw_mbps(sk))
+	    ca->curr_rtt <= HYSTART_CEIL(ca->css_rtt))
 		return false;
 	return true;
-#endif /* 0 */
 }
 
 /* XXX: copied from tcp_input.c. */
