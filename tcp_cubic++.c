@@ -413,6 +413,8 @@ static bool bictcp_hystart_try_restart_css(struct sock *sk)
 	return true;
 }
 
+static bool cubictcp_loss_exceed(struct sock *sk, const struct rate_sample *rs);
+
 static bool bictcp_hystart_exceed(struct sock *sk, const struct rate_sample *rs)
 {
 	struct bictcp *ca = inet_csk_ca(sk);
@@ -462,6 +464,8 @@ static bool bictcp_hystart_exceed(struct sock *sk, const struct rate_sample *rs)
 		    rs->snd_interval_us, rs->rcv_interval_us);
 		return true;
 	}
+	if (cubictcp_loss_exceed(sk, rs))
+		return true;
 	return false;
 }
 
