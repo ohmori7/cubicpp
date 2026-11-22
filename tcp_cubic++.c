@@ -40,7 +40,11 @@ bool debug __read_mostly = true;
 EXPORT_SYMBOL(debug);
 #define DP(fmt, ...)    if (debug) printk("%s:%d: " fmt, __func__, __LINE__, ##__VA_ARGS__)
 #endif /* ! CUBICPP_NODEBUG */
+
+#ifdef CUBICPP
+#include "compat.h"
 #define PACING_RATE(sk)	(READ_ONCE((sk)->sk_pacing_rate) * NBBY / 1024 / 1024)
+#endif /* CUBICPP */
 
 #define BICTCP_BETA_SCALE    1024	/* Scale factor beta calculation
 					 * max_cwnd = snd_cwnd * beta
@@ -1377,7 +1381,7 @@ static struct tcp_congestion_ops cubictcp __read_mostly = {
 #endif /* CUBICPP */
 };
 
-BTF_SET8_START(tcp_cubic_check_kfunc_ids)
+BTF_KFUNCS_START(tcp_cubic_check_kfunc_ids)
 #ifdef CONFIG_X86
 #ifdef CONFIG_DYNAMIC_FTRACE
 BTF_ID_FLAGS(func, cubictcp_init)
@@ -1388,7 +1392,7 @@ BTF_ID_FLAGS(func, cubictcp_cwnd_event)
 BTF_ID_FLAGS(func, cubictcp_acked)
 #endif
 #endif
-BTF_SET8_END(tcp_cubic_check_kfunc_ids)
+BTF_KFUNCS_END(tcp_cubic_check_kfunc_ids)
 
 static const struct btf_kfunc_id_set tcp_cubic_kfunc_set = {
 	.owner = THIS_MODULE,
