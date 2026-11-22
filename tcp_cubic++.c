@@ -290,9 +290,10 @@ static inline void cubic_policer_detection(const struct sock *sk, const struct r
 	 */
 	if (tp->data_segs_out > TCP_INIT_CWND * 10)
 		return;
-	if (rs->snd_interval_us * 2 < rs->rcv_interval_us)
+	if (rs->snd_interval_us * 2 < rs->rcv_interval_us) {
 		DP("policer exists: sndint=%u,rcvint=%u",
 		    rs->snd_interval_us, rs->rcv_interval_us);
+	}
 }
 
 static inline void bictcp_hystart_reset(struct sock *sk)
@@ -1277,7 +1278,7 @@ static void hystart_update(struct sock *sk, const struct rate_sample *rs)
 			return;
 	/* XXX: just for debug logging... */
 	if (ca->round > HYSTART_CSS_ROUND_NONE &&
-	    ca->round <= HYSTART_CSS_ROUNDS)
+	    ca->round <= HYSTART_CSS_ROUNDS) {
 		DP("CSS[%u]: cwnd=%u,ssthresh=%d,delay=min[%d]prior[%d,%d]curr[%d,%d]css[%d,%d],thresh=%d,sample=%d/%d",
 		    ca->round, tcp_snd_cwnd(tp), tp->snd_ssthresh,
 		    ca->delay_min,
@@ -1286,6 +1287,7 @@ static void hystart_update(struct sock *sk, const struct rate_sample *rs)
 		    ca->css_rtt, ca->css_rtt_max,
 		    HYSTART_DELAY_THRESH(ca->prior_rtt >> 3),
 		    ca->sample_cnt, HYSTART_MIN_SAMPLES);
+	}
 	/* the last round finshes after cwnd is increased in slow start. */
 	if (ca->round == HYSTART_CSS_ROUNDS) {
 		/* XXX: dirty hack. */
