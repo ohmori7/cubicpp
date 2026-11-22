@@ -1079,7 +1079,12 @@ static void cubictcp_ssthresh(struct sock *sk, const struct rate_sample *rs)
 
 __bpf_kfunc static void cubictcp_acked(struct sock *sk, const struct rate_sample *sample);
 
+#ifdef NEW_CC
+__bpf_kfunc static void cubictcp_cong_control(struct sock *sk, u32 ack, int flag,
+                                              const struct rate_sample *rs)
+#else /* NEW_CC */
 __bpf_kfunc static void cubictcp_cong_control(struct sock *sk, const struct rate_sample *rs)
+#endif /* NEW_CC */
 {
 	struct tcp_sock *tp = tcp_sk(sk);
 	struct bictcp *ca = inet_csk_ca(sk);
